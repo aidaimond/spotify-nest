@@ -1,5 +1,5 @@
 import mongoose, { Document } from 'mongoose';
-import { Prop, Schema } from '@nestjs/mongoose';
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 
 export type TrackDocument = Track & Document;
 
@@ -12,3 +12,5 @@ export class Track {
   @Prop({ required: true })
   duration: string;
 }
+
+export const TrackSchema = SchemaFactory.createForClass(Track);
