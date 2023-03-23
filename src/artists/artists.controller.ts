@@ -32,7 +32,7 @@ export class ArtistsController {
 
   @Post()
   @UseInterceptors(
-    FileInterceptor('image', { dest: './public/uploads/products' }),
+    FileInterceptor('image', { dest: './public/uploads/artists' }),
   )
   async createArtist(
     @UploadedFile() file: Express.Multer.File,
