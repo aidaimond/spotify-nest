@@ -10,7 +10,7 @@ export class Album {
   @Prop({ ref: 'Artist', required: true })
   artist: mongoose.Schema.Types.ObjectId;
   @Prop({ required: true })
-  yearOfIssue: string;
+  yearOfIssue: number;
   @Prop()
   image: string | null;
 }
