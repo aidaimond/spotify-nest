@@ -33,6 +33,7 @@ export class TracksController {
       name: trackDto.name,
       album: trackDto.album,
       duration: trackDto.duration,
+      number: trackDto.number,
     });
     return await track.save();
   }

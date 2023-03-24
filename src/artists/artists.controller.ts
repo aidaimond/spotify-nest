@@ -1,7 +1,10 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
+  HttpException,
+  HttpStatus,
   Param,
   Post,
   UploadedFile,
@@ -12,21 +15,24 @@ import { Artist, ArtistDocument } from '../schemas/artist.schema';
 import { Model } from 'mongoose';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { CreateArtistDto } from './create-artist.dto';
+import { Album, AlbumDocument } from '../schemas/album.schema';
 
 @Controller('artists')
 export class ArtistsController {
   constructor(
     @InjectModel(Artist.name)
     private artistModel: Model<ArtistDocument>,
+    @InjectModel(Album.name)
+    private albumModel: Model<AlbumDocument>,
   ) {}
 
   @Get()
-  async getAll() {
+  getAll() {
     return this.artistModel.find();
   }
 
   @Get(':id')
-  async getOne(@Param('id') id: string) {
+  getOne(@Param('id') id: string) {
     return this.artistModel.findOne({ _id: id });
   }
 
@@ -43,6 +49,23 @@ export class ArtistsController {
       info: artistDto.info,
       image: file ? '/uploads/artists/' + file.filename : null,
     });
-    return artist.save();
+    return await artist.save();
+  }
+
+  @Delete(':id')
+  async deleteArtist(@Param('id') id: string) {
+    const artist = await this.artistModel.findById(id);
+    if (artist) {
+      const albums = await this.albumModel.find({ artist: id });
+      if (albums.length) {
+        throw new HttpException(
+          "You can't delete an artist if they have albums",
+          HttpStatus.FORBIDDEN,
+        );
+      }
+      await this.artistModel.deleteOne({ _id: id });
+      return { message: 'Artist deleted' };
+    }
+    return { message: 'Artist not found' };
   }
 }

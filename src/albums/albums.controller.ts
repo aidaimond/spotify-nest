@@ -3,6 +3,8 @@ import {
   Controller,
   Delete,
   Get,
+  HttpException,
+  HttpStatus,
   Param,
   Post,
   Query,
@@ -49,7 +51,7 @@ export class AlbumsController {
     const album = new this.albumModel({
       name: albumDto.name,
       artist: albumDto.artist,
-      yearOfIssue: parseInt(albumDto.yearOfIssue),
+      yearOfIssue: albumDto.yearOfIssue,
       image: file ? '/uploads/albums/' + file.filename : null,
     });
     return await album.save();
@@ -61,7 +63,10 @@ export class AlbumsController {
     if (album) {
       const tracks = await this.trackModel.find({ album: id });
       if (tracks.length) {
-        return { message: "You can't delete an album if they have tracks" };
+        throw new HttpException(
+          "You can't delete an album if they have tracks",
+          HttpStatus.FORBIDDEN,
+        );
       }
       await this.albumModel.deleteOne({ _id: id });
 

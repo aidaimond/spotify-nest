@@ -11,6 +11,8 @@ export class Track {
   album: mongoose.Schema.Types.ObjectId;
   @Prop({ required: true })
   duration: string;
+  @Prop({ required: true })
+  number: number;
 }
 
 export const TrackSchema = SchemaFactory.createForClass(Track);
