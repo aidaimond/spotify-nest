@@ -18,6 +18,7 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { CreateArtistDto } from './create-artist.dto';
 import { Album, AlbumDocument } from '../schemas/album.schema';
 import { TokenAuthGuard } from '../auth/token-auth.guard';
+import { AdminGuard } from '../auth/admin.guard';
 
 @Controller('artists')
 export class ArtistsController {
@@ -55,6 +56,7 @@ export class ArtistsController {
     return await artist.save();
   }
 
+  @UseGuards(TokenAuthGuard, AdminGuard)
   @Delete(':id')
   async deleteArtist(@Param('id') id: string) {
     const artist = await this.artistModel.findById(id);
